@@ -1,0 +1,1144 @@
+{
+  "flashcards": [
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What is the GCP resource hierarchy from top to bottom?",
+      "back": "Organization → Folders → Projects → Resources. Policies are inherited downward."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What gcloud command creates a new project?",
+      "back": "gcloud projects create PROJECT_ID --name=\"Display Name\" --organization=ORG_ID"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "How do you enable an API for a project using gcloud?",
+      "back": "gcloud services enable SERVICE_NAME --project=PROJECT_ID (e.g., gcloud services enable compute.googleapis.com)"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What is Cloud Identity used for in GCP?",
+      "back": "Cloud Identity is an Identity as a Service (IDaaS) that manages users and groups. It provides the identities that IAM policies reference for access control."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What is the purpose of Organization Policies in GCP?",
+      "back": "Organization Policies set constraints on resources across the hierarchy. They override IAM and can restrict things like allowed VM locations, external IP usage, and service account creation."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "How do you list all APIs enabled in the current project?",
+      "back": "gcloud services list --enabled"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What are the three types of Google Cloud operations suite (formerly Stackdriver) components?",
+      "back": "Cloud Monitoring (metrics/alerts), Cloud Logging (log management), and Cloud Trace (latency analysis). Error Reporting and Profiler are also part of the suite."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "How do you request a quota increase in GCP?",
+      "back": "Navigate to IAM & Admin → Quotas in the Cloud Console, select the quota, and click 'Edit Quotas' to submit an increase request. Some quotas can also be adjusted via gcloud alpha quotas."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What gcloud command sets the default project for your CLI session?",
+      "back": "gcloud config set project PROJECT_ID"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Setting up cloud projects and accounts",
+      "front": "What is the difference between a project name, project ID, and project number?",
+      "back": "Project name: human-readable display name (not unique, mutable). Project ID: globally unique identifier (immutable after creation). Project number: auto-assigned unique numeric ID (immutable)."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "How do you link a project to a billing account using gcloud?",
+      "back": "gcloud billing projects link PROJECT_ID --billing-account=BILLING_ACCOUNT_ID"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "What IAM role is needed to create a billing account?",
+      "back": "roles/billing.creator at the organization level."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "How do you set up a budget alert in GCP?",
+      "back": "In the Cloud Console: Billing → Budgets & alerts → Create Budget. Set the scope (project/billing account), amount, and alert thresholds (e.g., 50%, 90%, 100%). Optionally connect to Pub/Sub for programmatic actions."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "What are the three billing export options in GCP?",
+      "back": "1) BigQuery export (detailed usage/cost data), 2) Cloud Storage export (CSV/JSON daily files), 3) Pricing export to BigQuery (public pricing data). BigQuery export is recommended for analysis."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "What happens to resources when a billing account is disabled?",
+      "back": "Resources are stopped/suspended (VMs shut down, App Engine disabled). Data is retained for a grace period, but eventually resources may be deleted if billing is not re-enabled."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "How do you list all billing accounts you have access to?",
+      "back": "gcloud billing accounts list"
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "What is the difference between a billing account and a payments profile?",
+      "back": "A billing account tracks charges for GCP resources and is linked to projects. A payments profile is a Google-level resource that stores payment methods (credit card, invoicing) and is linked to billing accounts."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "Can a project have multiple billing accounts?",
+      "back": "No. A project can only be linked to one billing account at a time. However, a single billing account can be linked to multiple projects."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "What IAM role allows a user to link projects to a billing account?",
+      "back": "roles/billing.user on the billing account, combined with roles/resourcemanager.projectCreator or roles/owner on the project."
+    },
+    {
+      "domain_id": 1,
+      "subtopic": "Managing billing configuration",
+      "front": "How can you programmatically respond to budget alerts?",
+      "back": "Configure the budget to publish to a Pub/Sub topic. Then create a Cloud Function triggered by that topic to take actions like disabling billing, sending notifications, or scaling down resources."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What are the four main compute options in GCP?",
+      "back": "Compute Engine (IaaS VMs), Google Kubernetes Engine (managed Kubernetes), Cloud Run (managed containers, serverless), and Cloud Functions (event-driven functions, FaaS)."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What is the difference between a Spot VM and a standard VM?",
+      "back": "Spot VMs cost 60-91% less than standard VMs but can be preempted at any time with no guarantee of availability. They are ideal for fault-tolerant batch processing workloads."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What are the predefined machine type families in Compute Engine?",
+      "back": "General-purpose (E2, N1, N2, N2D, Tau T2D), Compute-optimized (C2, C2D), Memory-optimized (M1, M2, M3), Accelerator-optimized (A2, G2) for GPU workloads."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "How do you create a custom machine type?",
+      "back": "gcloud compute instances create VM_NAME --custom-cpu=NUM_CPUS --custom-memory=MEMORY_MB or use the format --machine-type=custom-CPU-MEMORY (e.g., custom-4-16384)."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "When should you choose GKE Autopilot over Standard mode?",
+      "back": "Choose Autopilot when you want Google to manage the infrastructure (nodes, scaling, security). Choose Standard when you need control over node configuration, GPUs, or specific machine types."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What is the difference between Cloud Run and Cloud Functions?",
+      "back": "Cloud Run runs any container listening on a port; supports any language/binary and concurrent requests. Cloud Functions runs single-purpose functions triggered by events; limited to supported runtimes."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What are Committed Use Discounts (CUDs)?",
+      "back": "CUDs provide 1-year (up to 37% discount) or 3-year (up to 55% discount) commitments for a specified amount of vCPUs and memory in exchange for a predictable, lower price."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What is a sole-tenant node in Compute Engine?",
+      "back": "A sole-tenant node is a physical server dedicated to hosting only your VMs. Used for compliance, licensing (BYOL), or workloads that require physical isolation from other tenants."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What are Sustained Use Discounts?",
+      "back": "Automatic discounts (up to 30%) applied to Compute Engine resources that run for a significant portion of the month. Applied automatically with no commitment required. Available on N1 and N2 machine types."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring compute resources",
+      "front": "What is the maximum number of vCPUs for a single Compute Engine VM?",
+      "back": "Up to 416 vCPUs (on M3 machine types). General-purpose N2 supports up to 128 vCPUs. The limit varies by machine type family."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What are the four Cloud Storage classes?",
+      "back": "Standard (frequent access), Nearline (once per 30 days), Coldline (once per 90 days), Archive (once per 365 days). Minimum storage durations apply to non-Standard classes."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "When should you use Cloud SQL vs Cloud Spanner?",
+      "back": "Cloud SQL: managed MySQL/PostgreSQL/SQL Server for traditional relational workloads up to ~64 TB. Cloud Spanner: globally distributed, horizontally scalable relational DB for unlimited scale with strong consistency."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What is Firestore and what are its two modes?",
+      "back": "Firestore is a NoSQL document database. Native mode: real-time sync, offline support, suited for mobile/web. Datastore mode: backward-compatible with old Datastore API, suited for server-side applications."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "When should you choose Bigtable over Firestore?",
+      "back": "Choose Bigtable for high-throughput, low-latency analytics on large datasets (>1 TB). Choose Firestore for document-oriented data with complex queries and real-time sync needs."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What is BigQuery best suited for?",
+      "back": "BigQuery is a serverless data warehouse for analytics. Best for OLAP workloads, running SQL queries on large datasets (petabyte scale), and business intelligence."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What are the persistent disk types in Compute Engine?",
+      "back": "Standard (pd-standard, HDD), Balanced (pd-balanced, SSD), SSD (pd-ssd, highest performance), Extreme (pd-extreme, highest IOPS). Local SSDs also available but are ephemeral."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What is the difference between regional and multi-regional Cloud Storage buckets?",
+      "back": "Regional: stores data in a single region, lower cost, good for compute co-location. Multi-regional: stores data across multiple regions, higher availability, higher cost, good for serving content globally."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What is AlloyDB?",
+      "back": "AlloyDB is a fully managed, PostgreSQL-compatible database service optimized for demanding workloads. It offers up to 4x faster transactional and 100x faster analytical queries compared to standard PostgreSQL."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "What is Memorystore used for?",
+      "back": "Memorystore is a fully managed in-memory data store supporting Redis and Memcached. Used for caching, session management, and real-time analytics requiring sub-millisecond latency."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring data storage options",
+      "front": "How do you choose between Cloud Storage and a database?",
+      "back": "Cloud Storage: unstructured data (files, images, backups, logs). Databases (SQL/NoSQL): structured or semi-structured data that needs indexing, querying, transactions, or real-time access."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What are the two Network Service Tiers in GCP?",
+      "back": "Premium Tier (default): uses Google's private global network for optimal performance. Standard Tier: uses public internet for regional traffic at lower cost, no global load balancing."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What are the types of load balancers in GCP?",
+      "back": "External HTTP(S), Internal HTTP(S), External TCP/UDP Network, Internal TCP/UDP, External SSL Proxy, External TCP Proxy. HTTP(S) LBs are Layer 7; TCP/UDP are Layer 4."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is the difference between a regional and global load balancer?",
+      "back": "Global LBs (HTTP(S), SSL Proxy, TCP Proxy) distribute traffic across multiple regions with a single anycast IP. Regional LBs (Network, Internal) distribute traffic within a single region."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is Cloud CDN?",
+      "back": "Cloud CDN (Content Delivery Network) caches HTTP(S) content at Google's edge locations globally. It works with External HTTP(S) Load Balancers to reduce latency and backend load."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is Cloud Interconnect?",
+      "back": "Cloud Interconnect provides high-bandwidth, low-latency connectivity between on-premises networks and GCP. Dedicated Interconnect offers 10/100 Gbps. Partner Interconnect offers 50 Mbps–50 Gbps through a service provider."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What factors determine resource location selection in GCP?",
+      "back": "Latency (proximity to users), compliance (data residency requirements), cost (prices vary by region), availability (multi-region for HA), and service availability (not all services in all regions)."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is VPC Network Peering?",
+      "back": "VPC Network Peering connects two VPC networks so resources can communicate using internal IPs. Traffic stays on Google's network. Peering is non-transitive (A↔B and B↔C does not mean A↔C)."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is a Shared VPC?",
+      "back": "Shared VPC allows a host project to share its VPC network with service projects. Resources in service projects use subnets from the host project, enabling centralized network administration."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "What is Cloud Armor?",
+      "back": "Cloud Armor is a DDoS protection and WAF (Web Application Firewall) service. It works with External HTTP(S) Load Balancers to filter traffic using security policies with allow/deny rules."
+    },
+    {
+      "domain_id": 2,
+      "subtopic": "Planning and configuring network resources",
+      "front": "When would you choose Cloud VPN over Cloud Interconnect?",
+      "back": "Choose Cloud VPN for lower-bandwidth, encrypted connectivity over the public internet (up to 3 Gbps per tunnel). Choose Cloud Interconnect for high-bandwidth, low-latency private connectivity (10-200 Gbps)."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What gcloud command creates a VM instance with a custom machine type of 4 vCPUs and 16 GB RAM?",
+      "back": "gcloud compute instances create INSTANCE_NAME --custom-cpu=4 --custom-memory=16GB"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "How do you create a managed instance group (MIG) with autoscaling?",
+      "back": "1) Create instance template: gcloud compute instance-templates create TEMPLATE. 2) Create MIG: gcloud compute instance-groups managed create MIG --template=TEMPLATE --size=N. 3) Set autoscaling: gcloud compute instance-groups managed set-autoscaling MIG --max-num-replicas=MAX --target-cpu-utilization=0.6"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What is OS Login and how do you enable it?",
+      "back": "OS Login links Linux user accounts to Google identities, managing SSH access via IAM instead of metadata SSH keys. Enable with: gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What is VM Manager in Compute Engine?",
+      "back": "VM Manager is a suite of tools for managing OS patches, configurations, and compliance at scale. Includes OS Patch Management (automated patching), OS Config (desired state), and OS Inventory (software inventory)."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "How do you create a VM from a specific public image?",
+      "back": "gcloud compute instances create VM_NAME --image-project=IMAGE_PROJECT --image=IMAGE_NAME (e.g., --image-project=debian-cloud --image=debian-11-bullseye-v20230615)"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What is the difference between a managed and unmanaged instance group?",
+      "back": "Managed instance groups (MIGs) use instance templates and support autoscaling, auto-healing, rolling updates. Unmanaged instance groups contain heterogeneous VMs and have no autoscaling or auto-healing."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "How do you attach a startup script to a new VM?",
+      "back": "gcloud compute instances create VM_NAME --metadata-from-file=startup-script=PATH_TO_SCRIPT or inline: --metadata=startup-script='#!/bin/bash\\n...'"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What is a stateful MIG used for?",
+      "back": "Stateful MIGs preserve instance-specific state (disks, metadata, IPs) across recreation events. Used for workloads like databases or stateful applications that need persistent data per instance."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "How do you enable auto-healing on a MIG?",
+      "back": "Create a health check, then apply it: gcloud compute instance-groups managed update MIG --health-check=HEALTH_CHECK --initial-delay=300"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Compute Engine resources",
+      "front": "What is the difference between a zonal and regional MIG?",
+      "back": "Zonal MIG: instances in a single zone. Regional MIG: instances spread across multiple zones in a region for higher availability. Regional MIGs are recommended for production workloads."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What gcloud command creates a GKE Autopilot cluster?",
+      "back": "gcloud container clusters create-auto CLUSTER_NAME --region=REGION"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "How do you deploy a containerized application to GKE?",
+      "back": "1) Get credentials: gcloud container clusters get-credentials CLUSTER. 2) Deploy: kubectl create deployment NAME --image=IMAGE. 3) Expose: kubectl expose deployment NAME --type=LoadBalancer --port=80"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What is the difference between GKE Standard and Autopilot mode?",
+      "back": "Standard: you manage nodes, node pools, and scaling. Autopilot: Google manages infrastructure; you only define pods. Autopilot enforces best practices and charges per pod resource request."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What is a private GKE cluster?",
+      "back": "A private cluster has nodes with only internal IP addresses, isolating them from the public internet. The control plane can have a private or public endpoint. Access is controlled via authorized networks."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "How do you configure kubectl to connect to a GKE cluster?",
+      "back": "gcloud container clusters get-credentials CLUSTER_NAME --region=REGION --project=PROJECT_ID. This updates ~/.kube/config with the cluster's credentials."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What is a regional GKE cluster?",
+      "back": "A regional cluster replicates the control plane and nodes across three zones in a region, providing higher availability. The control plane is accessible even if one zone goes down."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What kubectl command scales a deployment to 5 replicas?",
+      "back": "kubectl scale deployment DEPLOYMENT_NAME --replicas=5"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What is GKE Enterprise (formerly Anthos)?",
+      "back": "GKE Enterprise is a managed platform for running Kubernetes clusters across GCP, on-premises, and other clouds. It provides a unified control plane, service mesh, config management, and policy enforcement."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "How do you create a node pool in a GKE cluster?",
+      "back": "gcloud container node-pools create POOL_NAME --cluster=CLUSTER_NAME --machine-type=MACHINE_TYPE --num-nodes=NUM"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying GKE resources",
+      "front": "What is the purpose of namespaces in Kubernetes?",
+      "back": "Namespaces provide logical isolation within a cluster. They separate resources for different teams, environments, or applications. Resource quotas and RBAC can be applied per namespace."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How do you deploy a container image to Cloud Run?",
+      "back": "gcloud run deploy SERVICE_NAME --image=IMAGE_URL --region=REGION --allow-unauthenticated (for public access)"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How do you deploy a Cloud Function (2nd gen) triggered by HTTP?",
+      "back": "gcloud functions deploy FUNCTION_NAME --gen2 --runtime=python311 --trigger-http --entry-point=FUNCTION --region=REGION --allow-unauthenticated"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "What is Eventarc?",
+      "back": "Eventarc is a service that routes events from Google Cloud sources, Pub/Sub, and third-party providers to Cloud Run, GKE, or Workflows as targets. It provides a unified eventing experience."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How does Cloud Run handle scaling?",
+      "back": "Cloud Run automatically scales from 0 to N container instances based on incoming requests. Min instances can be set to avoid cold starts. Max instances can be set to limit cost."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "What is the difference between Cloud Functions 1st gen and 2nd gen?",
+      "back": "2nd gen is built on Cloud Run, supports longer timeouts (up to 60 min), larger instances (up to 16 GB RAM, 4 vCPUs), concurrency (multiple requests per instance), and traffic splitting."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How do you trigger a Cloud Function from a Pub/Sub topic?",
+      "back": "gcloud functions deploy FUNC --gen2 --trigger-topic=TOPIC_NAME --runtime=python311 --entry-point=FUNCTION"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "What are Cloud Run jobs?",
+      "back": "Cloud Run jobs run a container to completion without serving requests. Used for batch processing, data migration, or scheduled tasks. Jobs can be run on demand or on a schedule."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How do you set environment variables on a Cloud Run service?",
+      "back": "gcloud run services update SERVICE --set-env-vars KEY1=VALUE1,KEY2=VALUE2 or use --env-vars-file=FILE.yaml"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "What port must a Cloud Run container listen on?",
+      "back": "By default, Cloud Run sends requests to port 8080. This can be configured with --port flag or the PORT environment variable. The container must listen on 0.0.0.0, not localhost."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying Cloud Run and Cloud Functions",
+      "front": "How do you connect a Cloud Run service to a VPC?",
+      "back": "Use a VPC connector: gcloud run services update SERVICE --vpc-connector=CONNECTOR_NAME --vpc-egress=all-traffic (or private-ranges-only)"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a Cloud SQL instance?",
+      "back": "gcloud sql instances create INSTANCE_NAME --database-version=MYSQL_8_0 --tier=db-n1-standard-2 --region=REGION"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a Firestore database?",
+      "back": "gcloud firestore databases create --location=LOCATION --type=firestore-native (or --type=datastore-mode)"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a BigQuery dataset?",
+      "back": "bq mk --dataset --location=US PROJECT_ID:DATASET_NAME or gcloud: not directly, use bq command-line tool."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a Pub/Sub topic and subscription?",
+      "back": "gcloud pubsub topics create TOPIC_NAME && gcloud pubsub subscriptions create SUB_NAME --topic=TOPIC_NAME"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a Cloud Spanner instance?",
+      "back": "gcloud spanner instances create INSTANCE_NAME --config=regional-REGION --processing-units=100 --description='Description'"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create a Cloud Storage bucket?",
+      "back": "gcloud storage buckets create gs://BUCKET_NAME --location=LOCATION --default-storage-class=STANDARD"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you import data into Cloud SQL from a SQL dump in Cloud Storage?",
+      "back": "gcloud sql import sql INSTANCE_NAME gs://BUCKET/FILE.sql --database=DB_NAME"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "What is Dataflow and when would you use it?",
+      "back": "Dataflow is a fully managed stream and batch data processing service based on Apache Beam. Use it for ETL pipelines, real-time analytics, and data transformation at scale."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "How do you create an AlloyDB cluster?",
+      "back": "gcloud alloydb clusters create CLUSTER_NAME --region=REGION --password=PASSWORD --network=VPC_NETWORK. Then create a primary instance: gcloud alloydb instances create INSTANCE --cluster=CLUSTER --region=REGION --instance-type=PRIMARY"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying data solutions",
+      "front": "What are the Pub/Sub subscription types?",
+      "back": "Pull: subscribers explicitly pull messages. Push: Pub/Sub delivers messages to an HTTP endpoint. BigQuery: writes messages directly to a BigQuery table. Cloud Storage: writes messages to Cloud Storage."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you create a custom mode VPC network?",
+      "back": "gcloud compute networks create NETWORK_NAME --subnet-mode=custom"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you create a subnet in a custom VPC?",
+      "back": "gcloud compute networks subnets create SUBNET_NAME --network=NETWORK --region=REGION --range=10.0.0.0/24"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you create a firewall rule to allow SSH traffic?",
+      "back": "gcloud compute firewall-rules create allow-ssh --network=NETWORK --allow=tcp:22 --source-ranges=0.0.0.0/0 --target-tags=allow-ssh"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "What is the difference between VPC firewall rules and firewall policies?",
+      "back": "VPC firewall rules apply to a single VPC network. Firewall policies (hierarchical) apply at organization or folder level and are inherited. Policies provide centralized, consistent security across projects."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you set up Cloud VPN with a Classic VPN gateway?",
+      "back": "1) Create VPN gateway: gcloud compute target-vpn-gateways create. 2) Reserve IP. 3) Create forwarding rules (ESP, UDP 500, UDP 4500). 4) Create VPN tunnel: gcloud compute vpn-tunnels create. 5) Add routes."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you create a VPC peering connection?",
+      "back": "gcloud compute networks peerings create PEERING_NAME --network=LOCAL_NETWORK --peer-network=PEER_NETWORK [--peer-project=PROJECT]. Must be created on both sides."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "What is HA VPN and how does it differ from Classic VPN?",
+      "back": "HA VPN uses two interfaces with redundant tunnels for 99.99% SLA. Classic VPN uses one interface with no SLA. HA VPN supports dynamic routing (BGP) only; Classic supports both static and dynamic."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you create firewall rules using network tags?",
+      "back": "Include --target-tags=TAG in the firewall rule. VMs with that tag are subject to the rule. Example: gcloud compute firewall-rules create allow-http --allow=tcp:80 --target-tags=web-server"
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "What are the default implied firewall rules in a VPC?",
+      "back": "Allow all egress (priority 65534), deny all ingress (priority 65535). These cannot be deleted. The default network also has pre-populated rules allowing internal traffic, SSH, RDP, and ICMP."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Deploying networking resources",
+      "front": "How do you enable Private Google Access on a subnet?",
+      "back": "gcloud compute networks subnets update SUBNET --region=REGION --enable-private-ip-google-access. This allows VMs without external IPs to reach Google APIs and services."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is Terraform and how is it used with GCP?",
+      "back": "Terraform is an open-source IaC tool by HashiCorp. It uses HCL to declare infrastructure. The Google provider manages GCP resources. Workflow: terraform init → plan → apply → destroy."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is the Cloud Foundation Toolkit (CFT)?",
+      "back": "CFT provides reference Terraform modules and templates following Google Cloud best practices. It includes modules for project factory, networking, GKE, and other common patterns."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is Config Connector?",
+      "back": "Config Connector is a Kubernetes add-on that lets you manage GCP resources through Kubernetes resource definitions (YAML). It maps GCP resources to Kubernetes custom resources."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is Helm in the context of GKE?",
+      "back": "Helm is a package manager for Kubernetes. It uses charts (pre-configured templates) to define, install, and upgrade Kubernetes applications. Common for deploying complex apps on GKE."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What does 'terraform plan' do?",
+      "back": "terraform plan creates an execution plan showing what changes Terraform will make to reach the desired state. It does not modify infrastructure; it previews additions, modifications, and deletions."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is the Terraform state file and why is it important?",
+      "back": "The state file (terraform.tfstate) maps Terraform config to real-world resources. It tracks resource IDs and metadata. Must be stored securely (e.g., in a Cloud Storage backend) for team collaboration."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "How do you configure a remote backend for Terraform state in GCP?",
+      "back": "In the Terraform config: terraform { backend \"gcs\" { bucket = \"BUCKET_NAME\" prefix = \"terraform/state\" } }. Then run terraform init to initialize the backend."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is terraform import used for?",
+      "back": "terraform import associates an existing real-world resource with a Terraform resource in state. Usage: terraform import RESOURCE_TYPE.NAME RESOURCE_ID. It does not generate config; you must write the HCL manually."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "What is the difference between Deployment Manager and Terraform?",
+      "back": "Deployment Manager is GCP-native IaC using YAML/Jinja2/Python templates (GCP-only). Terraform is multi-cloud, uses HCL, has a larger community, and is the recommended IaC tool for GCP."
+    },
+    {
+      "domain_id": 3,
+      "subtopic": "Infrastructure as code",
+      "front": "How do Helm charts work with GKE?",
+      "back": "A Helm chart is a collection of YAML templates and values. Install: helm install RELEASE_NAME CHART. Upgrade: helm upgrade RELEASE_NAME CHART. Charts can be stored in Artifact Registry."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you SSH into a Compute Engine VM using gcloud?",
+      "back": "gcloud compute ssh VM_NAME --zone=ZONE [--project=PROJECT]. Gcloud handles key generation and transfer automatically."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you create a snapshot of a persistent disk?",
+      "back": "gcloud compute disks snapshot DISK_NAME --zone=ZONE --snapshot-names=SNAPSHOT_NAME"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you create a custom image from a VM?",
+      "back": "1) Stop the VM. 2) gcloud compute images create IMAGE_NAME --source-disk=DISK_NAME --source-disk-zone=ZONE"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you list all VM instances across all zones?",
+      "back": "gcloud compute instances list"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you resize a VM's machine type?",
+      "back": "1) Stop the VM: gcloud compute instances stop VM_NAME. 2) Change type: gcloud compute instances set-machine-type VM_NAME --machine-type=NEW_TYPE. 3) Start: gcloud compute instances start VM_NAME."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you move a VM to a different zone?",
+      "back": "gcloud compute instances move VM_NAME --zone=SOURCE_ZONE --destination-zone=DEST_ZONE. The VM must be stopped first for cross-region moves."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "What is a scheduled snapshot policy?",
+      "back": "A snapshot schedule automatically creates snapshots of persistent disks at defined intervals (hourly, daily, weekly). Create with: gcloud compute resource-policies create snapshot-schedule."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you connect to a Windows VM?",
+      "back": "Use RDP (Remote Desktop Protocol). First set a Windows password: gcloud compute reset-windows-password VM_NAME --zone=ZONE. Then connect with an RDP client using the returned credentials."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you resize a persistent disk?",
+      "back": "gcloud compute disks resize DISK_NAME --size=NEW_SIZE --zone=ZONE. Disks can only be increased in size, never decreased. The OS filesystem must also be resized from within the VM."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Compute Engine resources",
+      "front": "How do you use the serial console for debugging a VM?",
+      "back": "gcloud compute connect-to-serial-port VM_NAME --zone=ZONE. Must enable serial port access via metadata: serial-port-enable=TRUE. Useful when SSH is not working."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you view all workloads running in a GKE cluster?",
+      "back": "kubectl get deployments --all-namespaces or kubectl get pods --all-namespaces for pod-level view."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you push a Docker image to Artifact Registry?",
+      "back": "1) Tag image: docker tag IMAGE REGION-docker.pkg.dev/PROJECT/REPO/IMAGE:TAG. 2) Configure auth: gcloud auth configure-docker REGION-docker.pkg.dev. 3) Push: docker push REGION-docker.pkg.dev/PROJECT/REPO/IMAGE:TAG"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you add a node pool to an existing GKE cluster?",
+      "back": "gcloud container node-pools create POOL_NAME --cluster=CLUSTER --machine-type=MACHINE_TYPE --num-nodes=3 --zone=ZONE"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you enable cluster autoscaler on a GKE node pool?",
+      "back": "gcloud container clusters update CLUSTER --enable-autoscaling --min-nodes=MIN --max-nodes=MAX --node-pool=POOL --zone=ZONE"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you perform a rolling update of a GKE deployment?",
+      "back": "kubectl set image deployment/DEPLOY CONTAINER=NEW_IMAGE:TAG or kubectl apply -f updated-deployment.yaml. Kubernetes gradually replaces old pods with new ones."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you resize a GKE node pool?",
+      "back": "gcloud container clusters resize CLUSTER --node-pool=POOL --num-nodes=NEW_SIZE --zone=ZONE"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "What is the difference between Artifact Registry and Container Registry?",
+      "back": "Artifact Registry is the next generation; it supports multiple artifact types (Docker, Maven, npm, Python, etc.), provides fine-grained IAM, and offers regional/multi-regional repos. Container Registry (deprecated) only supports Docker."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you view logs for a specific pod in GKE?",
+      "back": "kubectl logs POD_NAME [-c CONTAINER_NAME] [--follow] or view in Cloud Logging with filter: resource.type=\"k8s_container\" resource.labels.pod_name=\"POD\""
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you drain a node for maintenance in GKE?",
+      "back": "kubectl drain NODE_NAME --ignore-daemonsets --delete-emptydir-data. This gracefully evicts all pods from the node so it can be maintained or removed."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing GKE resources",
+      "front": "How do you upgrade a GKE cluster?",
+      "back": "gcloud container clusters upgrade CLUSTER --master --zone=ZONE (upgrades control plane). Then: gcloud container clusters upgrade CLUSTER --node-pool=POOL --zone=ZONE (upgrades nodes)."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you deploy a new revision of a Cloud Run service?",
+      "back": "gcloud run deploy SERVICE --image=NEW_IMAGE:TAG --region=REGION. Each deployment creates a new revision automatically."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you split traffic between two revisions in Cloud Run?",
+      "back": "gcloud run services update-traffic SERVICE --to-revisions=REV1=70,REV2=30 --region=REGION"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you set minimum instances for a Cloud Run service?",
+      "back": "gcloud run services update SERVICE --min-instances=MIN --region=REGION. Setting min > 0 keeps instances warm to avoid cold starts."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you set memory and CPU limits for a Cloud Run service?",
+      "back": "gcloud run services update SERVICE --memory=512Mi --cpu=1 --region=REGION"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you set the maximum number of concurrent requests per Cloud Run instance?",
+      "back": "gcloud run services update SERVICE --concurrency=80 --region=REGION. Default is 80. Setting to 1 ensures each instance handles one request at a time."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you roll back a Cloud Run service to a previous revision?",
+      "back": "gcloud run services update-traffic SERVICE --to-revisions=PREVIOUS_REVISION=100 --region=REGION"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you view Cloud Run service revisions?",
+      "back": "gcloud run revisions list --service=SERVICE --region=REGION"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you set Cloud Run to scale to zero?",
+      "back": "gcloud run services update SERVICE --min-instances=0 --region=REGION. This is the default. Instances scale to zero when there is no traffic."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you configure a Cloud Run service timeout?",
+      "back": "gcloud run services update SERVICE --timeout=300 --region=REGION. Maximum is 3600 seconds (60 minutes) for Cloud Run services."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing Cloud Run resources",
+      "front": "How do you set max instances for a Cloud Run service?",
+      "back": "gcloud run services update SERVICE --max-instances=MAX --region=REGION. Limits the maximum number of container instances to control cost."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you set a lifecycle rule on a Cloud Storage bucket?",
+      "back": "gcloud storage buckets update gs://BUCKET --lifecycle-file=LIFECYCLE.json. The JSON defines rules like deleting objects older than N days or changing storage class."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you run a query in BigQuery using the bq tool?",
+      "back": "bq query --use_legacy_sql=false 'SELECT * FROM dataset.table LIMIT 10'"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you create a backup of a Cloud SQL instance?",
+      "back": "gcloud sql backups create --instance=INSTANCE_NAME. For automated backups: gcloud sql instances patch INSTANCE --backup-start-time=HH:MM"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you check the status of a Dataflow job?",
+      "back": "gcloud dataflow jobs list --region=REGION to list jobs, or gcloud dataflow jobs describe JOB_ID --region=REGION for details."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you restore a Cloud SQL instance from a backup?",
+      "back": "gcloud sql backups restore BACKUP_ID --restore-instance=INSTANCE_NAME"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you copy objects between Cloud Storage buckets?",
+      "back": "gcloud storage cp gs://SOURCE_BUCKET/OBJECT gs://DEST_BUCKET/ or gcloud storage rsync for syncing entire buckets."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you enable versioning on a Cloud Storage bucket?",
+      "back": "gcloud storage buckets update gs://BUCKET --versioning"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you export data from BigQuery to Cloud Storage?",
+      "back": "bq extract --destination_format=CSV dataset.table gs://BUCKET/FILE.csv"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "How do you create a read replica for Cloud SQL?",
+      "back": "gcloud sql instances create REPLICA_NAME --master-instance-name=PRIMARY_INSTANCE --region=REGION"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing storage and database solutions",
+      "front": "What is Object Lifecycle Management in Cloud Storage?",
+      "back": "Rules that automatically transition objects between storage classes or delete them based on conditions like age, creation date, number of versions, or storage class. Helps optimize storage costs."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you expand a subnet's IP range?",
+      "back": "gcloud compute networks subnets expand-ip-range SUBNET --region=REGION --prefix-length=NEW_PREFIX. You can only expand (decrease prefix length), not shrink."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you reserve a static external IP address?",
+      "back": "gcloud compute addresses create ADDRESS_NAME --region=REGION (regional) or --global (global for load balancers)."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you create a Cloud DNS managed zone?",
+      "back": "gcloud dns managed-zones create ZONE_NAME --dns-name=DOMAIN.COM. --description='Description' --visibility=public"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you set up Cloud NAT?",
+      "back": "1) Create Cloud Router: gcloud compute routers create ROUTER --network=NETWORK --region=REGION. 2) Create NAT: gcloud compute routers nats create NAT --router=ROUTER --region=REGION --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you add a DNS record set?",
+      "back": "gcloud dns record-sets create DNS_NAME --zone=ZONE --type=A --rrdatas=IP_ADDRESS --ttl=300"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you promote an ephemeral IP to static?",
+      "back": "gcloud compute addresses create STATIC_NAME --addresses=EPHEMERAL_IP --region=REGION. This promotes the existing ephemeral external IP to a static reservation."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "What is Cloud NAT used for?",
+      "back": "Cloud NAT allows VMs without external IPs to access the internet for outbound connections (e.g., downloading packages) without exposing them to inbound traffic from the internet."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you list all subnets in a VPC?",
+      "back": "gcloud compute networks subnets list --network=NETWORK_NAME"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you configure Private DNS in Cloud DNS?",
+      "back": "gcloud dns managed-zones create ZONE --dns-name=DOMAIN --description='Private zone' --visibility=private --networks=NETWORK_NAME"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Managing networking resources",
+      "front": "How do you list all firewall rules for a VPC network?",
+      "back": "gcloud compute firewall-rules list --filter='network=NETWORK_NAME'"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "How do you create an alerting policy in Cloud Monitoring?",
+      "back": "Use the Cloud Console: Monitoring → Alerting → Create Policy. Define a condition (metric threshold), notification channel (email, SMS, Pub/Sub, PagerDuty), and documentation."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "How do you create a custom metric in Cloud Monitoring?",
+      "back": "Use the Monitoring API: create a MetricDescriptor with type custom.googleapis.com/METRIC_NAME, then write time series data points using the timeSeries.create method."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "How do you export logs to Cloud Storage?",
+      "back": "Create a log sink: gcloud logging sinks create SINK_NAME storage.googleapis.com/BUCKET --log-filter='FILTER'. Grant the sink's service account write access to the bucket."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "What is a log router in Cloud Logging?",
+      "back": "The log router processes all logs and routes them based on sink rules. Each log entry is evaluated against sinks; matching entries are sent to the sink destination (Storage, BigQuery, Pub/Sub, etc.)."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "What are the types of audit logs in GCP?",
+      "back": "Admin Activity (always on, who did what admin action), Data Access (configurable, who read/wrote data), System Event (Google system actions), Policy Denied (access denied events)."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "What is the Ops Agent?",
+      "back": "The Ops Agent is a unified agent that collects system metrics (CPU, memory, disk) and logs from Compute Engine VMs, sending them to Cloud Monitoring and Cloud Logging. It replaces the legacy monitoring and logging agents."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "What is Managed Service for Prometheus?",
+      "back": "A fully managed, multi-cloud, cross-project Prometheus-compatible monitoring service. It allows collecting Prometheus metrics and querying them with PromQL in Cloud Monitoring."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "How do you view logs using gcloud?",
+      "back": "gcloud logging read 'FILTER' --limit=10 --format=json. Example filter: 'resource.type=gce_instance AND severity>=ERROR'"
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "How do you create a log-based metric?",
+      "back": "gcloud logging metrics create METRIC_NAME --description='Description' --log-filter='FILTER'. Log-based metrics count log entries or extract values, usable in Monitoring dashboards and alerts."
+    },
+    {
+      "domain_id": 4,
+      "subtopic": "Monitoring and logging",
+      "front": "What is an exclusion filter in Cloud Logging?",
+      "back": "An exclusion filter prevents matching log entries from being ingested into Cloud Logging, reducing costs. Created with: gcloud logging sinks update _Default --add-exclusion name=EXCLUSION,filter='FILTER'"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "What are the three types of IAM roles?",
+      "back": "Basic roles (Owner, Editor, Viewer - broad access), Predefined roles (fine-grained, service-specific), Custom roles (user-defined with specific permissions)."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "How do you grant an IAM role to a user?",
+      "back": "gcloud projects add-iam-policy-binding PROJECT_ID --member='user:email@example.com' --role='roles/ROLE_NAME'"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "How do you view the IAM policy for a project?",
+      "back": "gcloud projects get-iam-policy PROJECT_ID"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "How do you create a custom IAM role?",
+      "back": "gcloud iam roles create ROLE_ID --project=PROJECT_ID --title='Title' --permissions=PERMISSION1,PERMISSION2 --stage=GA"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "What is the principle of least privilege in IAM?",
+      "back": "Grant only the minimum permissions needed for a user or service account to perform their task. Use predefined roles over basic roles, and custom roles for fine-grained control."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "What is an IAM condition?",
+      "back": "IAM conditions add attribute-based control to role bindings. They restrict when a binding is effective based on attributes like resource type, resource name, date/time, or IP address."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "What is the difference between IAM deny policies and allow policies?",
+      "back": "Allow policies grant access (traditional IAM). Deny policies explicitly block access and take precedence over allow policies. Deny policies are useful for broad restrictions across the organization."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "How do you list all roles available in a project?",
+      "back": "gcloud iam roles list --project=PROJECT_ID (custom roles). gcloud iam roles list (all predefined roles)."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "What is the IAM Policy Troubleshooter?",
+      "back": "A tool that helps determine why a user has or does not have access to a resource. It evaluates all relevant allow and deny policies and explains the result. Available via Console or gcloud policy-troubleshoot."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing IAM",
+      "front": "How do you remove an IAM role binding from a user?",
+      "back": "gcloud projects remove-iam-policy-binding PROJECT_ID --member='user:email@example.com' --role='roles/ROLE_NAME'"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "How do you create a service account?",
+      "back": "gcloud iam service-accounts create SA_NAME --display-name='Display Name' --project=PROJECT_ID"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "What is service account impersonation?",
+      "back": "Impersonation lets a user or SA act as another SA without needing its key. Requires roles/iam.serviceAccountTokenCreator on the target SA. Use: gcloud --impersonate-service-account=SA_EMAIL."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "How do you create short-lived credentials for a service account?",
+      "back": "Use the IAM Credentials API: generateAccessToken (OAuth2 tokens, max 1 hour) or generateIdToken (OIDC tokens). This avoids creating and managing service account keys."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "Why should you avoid using service account keys?",
+      "back": "Keys are long-lived credentials that can be leaked or stolen. Prefer Workload Identity (GKE), attached service accounts (Compute Engine), or impersonation. If keys are necessary, rotate them regularly."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "What is the default Compute Engine service account?",
+      "back": "PROJECT_NUMBER-compute@developer.gserviceaccount.com. Automatically created and attached to VMs by default. Has Editor role (overly broad). Best practice: use a custom SA with minimal permissions."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "How do you assign a service account to a VM?",
+      "back": "At creation: gcloud compute instances create VM --service-account=SA_EMAIL --scopes=cloud-platform. To change: stop the VM, then gcloud compute instances set-service-account VM --service-account=SA_EMAIL."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "What is Workload Identity in GKE?",
+      "back": "Workload Identity links Kubernetes service accounts to Google Cloud service accounts. Pods use the KSA, which automatically gets credentials for the linked GSA. Eliminates need for SA keys in pods."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "How do you list all service accounts in a project?",
+      "back": "gcloud iam service-accounts list --project=PROJECT_ID"
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "What are access scopes and how do they relate to IAM?",
+      "back": "Access scopes are a legacy mechanism that limit API access for a VM's service account. IAM roles are the primary access control. Effective permissions = intersection of scope and IAM role. Use --scopes=cloud-platform for full IAM control."
+    },
+    {
+      "domain_id": 5,
+      "subtopic": "Managing service accounts",
+      "front": "How do you disable a service account without deleting it?",
+      "back": "gcloud iam service-accounts disable SA_EMAIL. This prevents the SA from authenticating. Re-enable with: gcloud iam service-accounts enable SA_EMAIL."
+    }
+  ]
+}

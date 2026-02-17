@@ -56,3 +56,50 @@ def seed_study_plan(db_path: str) -> None:
             day += 1
     conn.commit()
     conn.close()
+
+
+def seed_flashcards(db_path: str) -> None:
+    """Insert flashcards from flashcards.json."""
+    data = json.loads((CONTENT_DIR / "flashcards.json").read_text())
+    conn = get_connection(db_path)
+    for card in data["flashcards"]:
+        # Look up subtopic_id by name
+        row = conn.execute(
+            "SELECT id FROM subtopics WHERE name = ?", (card["subtopic"],)
+        ).fetchone()
+        subtopic_id = row["id"] if row else None
+        conn.execute(
+            "INSERT INTO flashcards (domain_id, subtopic_id, front, back, source) VALUES (?, ?, ?, ?, 'seeded')",
+            (card["domain_id"], subtopic_id, card["front"], card["back"]),
+        )
+    conn.commit()
+    conn.close()
+
+
+def seed_questions(db_path: str) -> None:
+    """Insert quiz questions from questions.json."""
+    data = json.loads((CONTENT_DIR / "questions.json").read_text())
+    conn = get_connection(db_path)
+    for q in data["questions"]:
+        row = conn.execute(
+            "SELECT id FROM subtopics WHERE name = ?", (q["subtopic"],)
+        ).fetchone()
+        subtopic_id = row["id"] if row else None
+        conn.execute(
+            """INSERT INTO quiz_questions
+            (domain_id, subtopic_id, stem, choice_a, choice_b, choice_c, choice_d, correct_answer, explanation, source)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'seeded')""",
+            (q["domain_id"], subtopic_id, q["stem"], q["choice_a"], q["choice_b"], q["choice_c"], q["choice_d"], q["correct_answer"], q["explanation"]),
+        )
+    conn.commit()
+    conn.close()
+
+
+def seed_all(db_path: str) -> None:
+    """Run all seed functions in order."""
+    if is_seeded(db_path):
+        return
+    seed_domains(db_path)
+    seed_study_plan(db_path)
+    seed_flashcards(db_path)
+    seed_questions(db_path)
