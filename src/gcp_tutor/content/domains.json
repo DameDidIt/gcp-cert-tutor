@@ -1,0 +1,68 @@
+{
+  "domains": [
+    {
+      "id": 1,
+      "name": "Setting Up a Cloud Solution Environment",
+      "section_number": 1,
+      "exam_weight": 0.20,
+      "description": "Setting up cloud projects, accounts, and billing",
+      "subtopics": [
+        {"name": "Setting up cloud projects and accounts", "description": "Resource hierarchy, org policies, IAM roles, Cloud Identity, APIs, operations suite, quotas"},
+        {"name": "Managing billing configuration", "description": "Billing accounts, linking projects, budgets/alerts, billing exports"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Planning and Configuring a Cloud Solution",
+      "section_number": 2,
+      "exam_weight": 0.175,
+      "description": "Planning compute, storage, and network resources",
+      "subtopics": [
+        {"name": "Planning and configuring compute resources", "description": "Compute Engine, GKE, Cloud Run, Cloud Functions, Spot VMs, custom machine types"},
+        {"name": "Planning and configuring data storage options", "description": "Cloud SQL, BigQuery, Firestore, Spanner, Bigtable, storage classes"},
+        {"name": "Planning and configuring network resources", "description": "Load balancing, resource locations, Network Service Tiers"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Deploying and Implementing a Cloud Solution",
+      "section_number": 3,
+      "exam_weight": 0.25,
+      "description": "Deploying compute, data, and networking resources",
+      "subtopics": [
+        {"name": "Deploying Compute Engine resources", "description": "Instances, autoscaled MIGs, OS Login, VM Manager"},
+        {"name": "Deploying GKE resources", "description": "kubectl, cluster configs (Autopilot, regional, private, Enterprise), containerized apps"},
+        {"name": "Deploying Cloud Run and Cloud Functions", "description": "Deploying apps, event handling, Pub/Sub, Eventarc"},
+        {"name": "Deploying data solutions", "description": "Cloud SQL, Firestore, BigQuery, Spanner, Pub/Sub, Dataflow, Cloud Storage, AlloyDB"},
+        {"name": "Deploying networking resources", "description": "VPC/subnets, firewall rules/policies, Cloud VPN, VPC Peering"},
+        {"name": "Infrastructure as code", "description": "Terraform, Cloud Foundation Toolkit, Config Connector, Helm"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Ensuring Successful Operation of a Cloud Solution",
+      "section_number": 4,
+      "exam_weight": 0.20,
+      "description": "Managing and monitoring cloud resources",
+      "subtopics": [
+        {"name": "Managing Compute Engine resources", "description": "Remote connect, VM inventory, snapshots, images"},
+        {"name": "Managing GKE resources", "description": "Cluster inventory, Artifact Registry, node pools, autoscaling"},
+        {"name": "Managing Cloud Run resources", "description": "New versions, traffic splitting, scaling parameters"},
+        {"name": "Managing storage and database solutions", "description": "Cloud Storage lifecycle, queries, backups, job status"},
+        {"name": "Managing networking resources", "description": "Subnets, IP addresses, Cloud DNS, Cloud NAT"},
+        {"name": "Monitoring and logging", "description": "Alerts, custom metrics, log exports, log routers, audit logs, Ops Agent, Managed Prometheus"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Configuring Access and Security",
+      "section_number": 5,
+      "exam_weight": 0.175,
+      "description": "IAM and service account management",
+      "subtopics": [
+        {"name": "Managing IAM", "description": "IAM policies, role types (basic, predefined, custom)"},
+        {"name": "Managing service accounts", "description": "Creation, minimum permissions, impersonation, short-lived credentials"}
+      ]
+    }
+  ]
+}
