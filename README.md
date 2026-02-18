@@ -28,7 +28,7 @@ A local Python CLI tool that helps you prepare for the Google Cloud Associate Cl
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/gcp_cert_tutor.git
+git clone https://github.com/DameDidIt/gcp-cert-tutor.git
 cd gcp_cert_tutor
 ```
 
