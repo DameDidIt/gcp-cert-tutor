@@ -32,6 +32,12 @@ def seed_domains(db_path: str) -> None:
     conn.close()
 
 
+def _load_reading_content() -> dict:
+    """Load per-domain reading content from reading.json."""
+    data = json.loads((CONTENT_DIR / "reading.json").read_text())
+    return data["domains"]
+
+
 def seed_study_plan(db_path: str) -> None:
     """Create the 30-day study plan, ordered by exam weight (heaviest first)."""
     # Domain order by exam weight: 3(25%), 1(20%), 4(20%), 2(17.5%), 5(17.5%)
@@ -45,15 +51,34 @@ def seed_study_plan(db_path: str) -> None:
         (None, 2), # Days 27-28: practice exams
         (None, 2), # Days 29-30: final review
     ]
+    reading = _load_reading_content()
     conn = get_connection(db_path)
     day = 1
     for domain_id, count in plan:
+        content = reading.get(str(domain_id), reading.get("review"))
         for _ in range(count):
             conn.execute(
-                "INSERT INTO study_days (day_number, domain_id, status) VALUES (?, ?, 'pending')",
-                (day, domain_id),
+                "INSERT INTO study_days (day_number, domain_id, status, reading_content) VALUES (?, ?, 'pending', ?)",
+                (day, domain_id, content),
             )
             day += 1
+    conn.commit()
+    conn.close()
+
+
+def ensure_reading_content(db_path: str) -> None:
+    """Backfill reading_content for any study_days rows where it is NULL."""
+    reading = _load_reading_content()
+    conn = get_connection(db_path)
+    rows = conn.execute(
+        "SELECT id, domain_id FROM study_days WHERE reading_content IS NULL OR reading_content = ''"
+    ).fetchall()
+    for row in rows:
+        content = reading.get(str(row["domain_id"]), reading.get("review"))
+        conn.execute(
+            "UPDATE study_days SET reading_content = ? WHERE id = ?",
+            (content, row["id"]),
+        )
     conn.commit()
     conn.close()
 
@@ -97,9 +122,9 @@ def seed_questions(db_path: str) -> None:
 
 def seed_all(db_path: str) -> None:
     """Run all seed functions in order."""
-    if is_seeded(db_path):
-        return
-    seed_domains(db_path)
-    seed_study_plan(db_path)
-    seed_flashcards(db_path)
-    seed_questions(db_path)
+    if not is_seeded(db_path):
+        seed_domains(db_path)
+        seed_study_plan(db_path)
+        seed_flashcards(db_path)
+        seed_questions(db_path)
+    ensure_reading_content(db_path)

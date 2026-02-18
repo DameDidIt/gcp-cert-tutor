@@ -288,9 +288,11 @@ def cmd_plan(db_path: str):
 def main():
     db_path = DEFAULT_DB_PATH
     init_db(db_path)
-    if not is_seeded(db_path):
+    first_run = not is_seeded(db_path)
+    if first_run:
         console.print("[dim]Setting up for first use...[/dim]")
-        seed_all(db_path)
+    seed_all(db_path)
+    if first_run:
         console.print("[green]Ready![/green]\n")
 
     show_welcome()
