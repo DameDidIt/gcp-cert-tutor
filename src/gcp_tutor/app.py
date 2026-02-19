@@ -14,7 +14,7 @@ from gcp_tutor.seed import seed_all, is_seeded
 from gcp_tutor.study import (
     get_current_session_day, get_todays_plan, start_new_session,
     complete_session_component, get_calendar_days_elapsed, get_completed_sessions,
-    get_total_sessions,
+    get_total_sessions, reset_all_progress,
 )
 from gcp_tutor.flashcards import get_due_cards, get_cards_for_domain, record_flashcard_result
 from gcp_tutor.quiz import (
@@ -46,7 +46,7 @@ def show_menu():
         ("dashboard", "Readiness score + progress"),
         ("review", "Drill weak areas"),
         ("import", "Add study material"),
-        ("plan", "View 30-day plan"),
+        ("plan", "View/reset 30-day plan"),
         ("quit", "Exit"),
     ]
     for cmd, desc in commands:
@@ -283,6 +283,17 @@ def cmd_plan(db_path: str):
             f"[green]{status}[/green]" if status == "Done" else f"[cyan]{status}[/cyan]",
         )
     console.print(table)
+
+    action = Prompt.ask("\n[dim]Reset progress? (yes/no)[/dim]", default="no").strip().lower()
+    if action in ("yes", "y"):
+        confirm = Prompt.ask(
+            "[bold red]This will erase ALL progress, quiz scores, and flashcard history. Type 'reset' to confirm[/bold red]"
+        )
+        if confirm.strip().lower() == "reset":
+            reset_all_progress(db_path)
+            console.print("[green]Progress reset! You're back to Day 1.[/green]")
+        else:
+            console.print("[dim]Reset cancelled.[/dim]")
 
 
 def main():

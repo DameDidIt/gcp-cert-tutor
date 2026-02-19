@@ -110,3 +110,17 @@ def get_completed_sessions(db_path: str) -> int:
     count = conn.execute("SELECT COUNT(*) FROM user_progress WHERE completed_at IS NOT NULL").fetchone()[0]
     conn.close()
     return count
+
+
+def reset_all_progress(db_path: str) -> None:
+    """Reset all user progress back to day 1."""
+    conn = get_connection(db_path)
+    conn.execute("DELETE FROM user_progress")
+    conn.execute("DELETE FROM quiz_results")
+    conn.execute("DELETE FROM flashcard_results")
+    conn.execute("DELETE FROM user_settings")
+    conn.execute(
+        "UPDATE flashcards SET ease_factor = 2.5, interval = 0, repetitions = 0, next_review = NULL"
+    )
+    conn.commit()
+    conn.close()
