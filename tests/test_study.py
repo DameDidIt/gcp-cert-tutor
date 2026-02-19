@@ -4,7 +4,8 @@ from gcp_tutor.seed import seed_all
 from gcp_tutor.study import (
     get_current_session_day, get_todays_plan, complete_reading,
     complete_session_component, get_start_date, start_new_session,
-    reset_all_progress,
+    reset_all_progress, record_session_item, get_completed_session_items,
+    clear_session_items, is_session_incomplete,
 )
 
 def test_get_current_session_day_default(tmp_db):
@@ -62,3 +63,60 @@ def test_reset_all_progress(tmp_db):
     assert card["repetitions"] == 0
     assert card["next_review"] is None
     conn.close()
+
+def test_record_and_get_session_items(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    record_session_item(tmp_db, session_day=1, component="flashcard", item_id=5)
+    record_session_item(tmp_db, session_day=1, component="flashcard", item_id=10)
+    items = get_completed_session_items(tmp_db, session_day=1, component="flashcard")
+    assert items == {5, 10}
+
+def test_record_session_item_duplicate_ignored(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    record_session_item(tmp_db, session_day=1, component="quiz", item_id=3)
+    record_session_item(tmp_db, session_day=1, component="quiz", item_id=3)
+    items = get_completed_session_items(tmp_db, session_day=1, component="quiz")
+    assert items == {3}
+
+def test_clear_session_items(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    record_session_item(tmp_db, session_day=1, component="flashcard", item_id=5)
+    clear_session_items(tmp_db, session_day=1)
+    items = get_completed_session_items(tmp_db, session_day=1, component="flashcard")
+    assert items == set()
+
+def test_is_session_incomplete_no_progress(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    assert is_session_incomplete(tmp_db) is False
+
+def test_is_session_incomplete_partial(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    complete_session_component(tmp_db, 1, "reading")
+    assert is_session_incomplete(tmp_db) is True
+
+def test_is_session_incomplete_all_done(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    complete_session_component(tmp_db, 1, "reading")
+    complete_session_component(tmp_db, 1, "flashcards")
+    complete_session_component(tmp_db, 1, "quiz")
+    assert is_session_incomplete(tmp_db) is False
+
+def test_reset_clears_session_items(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    record_session_item(tmp_db, session_day=1, component="flashcard", item_id=5)
+    reset_all_progress(tmp_db)
+    items = get_completed_session_items(tmp_db, session_day=1, component="flashcard")
+    assert items == set()

@@ -118,9 +118,49 @@ def reset_all_progress(db_path: str) -> None:
     conn.execute("DELETE FROM user_progress")
     conn.execute("DELETE FROM quiz_results")
     conn.execute("DELETE FROM flashcard_results")
+    conn.execute("DELETE FROM session_items")
     conn.execute("DELETE FROM user_settings")
     conn.execute(
         "UPDATE flashcards SET ease_factor = 2.5, interval = 0, repetitions = 0, next_review = NULL"
     )
     conn.commit()
     conn.close()
+
+
+def record_session_item(db_path: str, session_day: int, component: str, item_id: int) -> None:
+    conn = get_connection(db_path)
+    conn.execute(
+        "INSERT OR IGNORE INTO session_items (session_day, component, item_id) VALUES (?, ?, ?)",
+        (session_day, component, item_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_completed_session_items(db_path: str, session_day: int, component: str) -> set[int]:
+    conn = get_connection(db_path)
+    rows = conn.execute(
+        "SELECT item_id FROM session_items WHERE session_day = ? AND component = ?",
+        (session_day, component),
+    ).fetchall()
+    conn.close()
+    return {row["item_id"] for row in rows}
+
+
+def clear_session_items(db_path: str, session_day: int) -> None:
+    conn = get_connection(db_path)
+    conn.execute("DELETE FROM session_items WHERE session_day = ?", (session_day,))
+    conn.commit()
+    conn.close()
+
+
+def is_session_incomplete(db_path: str) -> bool:
+    day = get_current_session_day(db_path)
+    conn = get_connection(db_path)
+    progress = conn.execute(
+        "SELECT * FROM user_progress WHERE session_day = ?", (day,)
+    ).fetchone()
+    conn.close()
+    if not progress:
+        return False
+    return not (progress["reading_done"] and progress["flashcards_done"] and progress["quiz_done"])
