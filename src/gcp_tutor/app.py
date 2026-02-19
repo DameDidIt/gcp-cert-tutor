@@ -16,6 +16,7 @@ from gcp_tutor.study import (
     complete_session_component, get_calendar_days_elapsed, get_completed_sessions,
     get_total_sessions, reset_all_progress,
     record_session_item, get_completed_session_items,
+    is_session_incomplete, restart_session,
 )
 from gcp_tutor.flashcards import get_due_cards, get_cards_for_domain, record_flashcard_result
 from gcp_tutor.quiz import (
@@ -167,38 +168,55 @@ def cmd_study(db_path: str):
     ))
     progress = start_new_session(db_path)
 
-    # Reading
-    if not progress.get("reading_done"):
-        console.print("\n[bold]1. Reading Material[/bold]")
-        if plan.get("reading_content"):
-            console.print(plan["reading_content"])
-        else:
-            console.print(f"[dim]Review the key concepts for: {plan.get('domain_name', 'all domains')}[/dim]")
-        Prompt.ask("[dim]Press Enter when done reading[/dim]")
-        complete_session_component(db_path, day, "reading")
-        console.print("[green]Reading complete![/green]\n")
+    # Detect incomplete session and offer resume/restart
+    if is_session_incomplete(db_path) and (
+        progress.get("reading_done") or progress.get("flashcards_done") or progress.get("quiz_done")
+    ):
+        console.print("[yellow]You have an incomplete session in progress.[/yellow]")
+        choice = Prompt.ask("Resume where you left off or restart?", choices=["resume", "restart"], default="resume")
+        if choice == "restart":
+            restart_session(db_path, day)
+            progress = start_new_session(db_path)
 
-    # Flashcards
-    if not progress.get("flashcards_done"):
-        console.print("[bold]2. Flashcards[/bold]")
-        if plan.get("domain_id"):
-            cards = get_cards_for_domain(db_path, plan["domain_id"], limit=12)
-        else:
-            cards = get_due_cards(db_path, limit=12)
-        run_flashcard_session(db_path, cards)
-        complete_session_component(db_path, day, "flashcards")
-        console.print("[green]Flashcards complete![/green]\n")
+    console.print("[dim]Type 'q' or 'menu' at any prompt to save progress and return to the main menu.[/dim]\n")
 
-    # Quiz
-    if not progress.get("quiz_done"):
-        console.print("[bold]3. Quiz[/bold]")
-        if plan.get("domain_id"):
-            questions = get_questions_for_domain(db_path, plan["domain_id"], count=8)
-        else:
-            questions = get_quiz_questions(db_path, count=8)
-        run_quiz_session(db_path, questions)
-        complete_session_component(db_path, day, "quiz")
-        console.print("[green]Quiz complete! Session done.[/green]")
+    try:
+        # Reading
+        if not progress.get("reading_done"):
+            console.print("[bold]1. Reading Material[/bold]")
+            if plan.get("reading_content"):
+                console.print(plan["reading_content"])
+            else:
+                console.print(f"[dim]Review the key concepts for: {plan.get('domain_name', 'all domains')}[/dim]")
+            session_prompt("[dim]Press Enter when done reading (or 'q' to exit)[/dim]")
+            complete_session_component(db_path, day, "reading")
+            console.print("[green]Reading complete![/green]\n")
+
+        # Flashcards
+        if not progress.get("flashcards_done"):
+            console.print("[bold]2. Flashcards[/bold]")
+            if plan.get("domain_id"):
+                cards = get_cards_for_domain(db_path, plan["domain_id"], limit=12)
+            else:
+                cards = get_due_cards(db_path, limit=12)
+            run_flashcard_session(db_path, cards, session_day=day)
+            complete_session_component(db_path, day, "flashcards")
+            console.print("[green]Flashcards complete![/green]\n")
+
+        # Quiz
+        if not progress.get("quiz_done"):
+            console.print("[bold]3. Quiz[/bold]")
+            if plan.get("domain_id"):
+                questions = get_questions_for_domain(db_path, plan["domain_id"], count=8)
+            else:
+                questions = get_quiz_questions(db_path, count=8)
+            run_quiz_session(db_path, questions, session_day=day)
+            complete_session_component(db_path, day, "quiz")
+            console.print("[green]Quiz complete! Session done.[/green]")
+
+    except SessionExitRequested:
+        console.print("\n[yellow]Session paused. Your progress has been saved.[/yellow]")
+        console.print("[dim]Run 'study' again to resume where you left off.[/dim]")
 
 
 def cmd_quiz(db_path: str):

@@ -131,3 +131,73 @@ def test_run_quiz_session_skips_completed_items(tmp_db):
     assert questions[0]["id"] in done
     assert questions[1]["id"] in done
     assert questions[2]["id"] in done
+
+
+from gcp_tutor.app import cmd_study
+from gcp_tutor.study import complete_session_component, is_session_incomplete
+
+
+def test_cmd_study_exit_during_reading_saves_progress(tmp_db):
+    """Typing 'q' during reading returns to menu with progress saved."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    # User types 'q' at the reading prompt
+    with patch("gcp_tutor.app.Prompt.ask", return_value="q"):
+        cmd_study(tmp_db)  # Should NOT raise — exception is caught internally
+    # Session should be incomplete (reading not marked done)
+    assert is_session_incomplete(tmp_db)
+
+
+def test_cmd_study_exit_during_flashcards_saves_progress(tmp_db):
+    """Typing 'q' during flashcards returns to menu; reading already marked done."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    complete_session_component(tmp_db, 1, "reading")
+
+    # Resume prompt (resume) then 'q' on first flashcard reveal
+    with patch("gcp_tutor.app.Prompt.ask", side_effect=["resume", "q"]):
+        cmd_study(tmp_db)
+
+    progress = start_new_session(tmp_db)
+    assert progress["reading_done"]
+    assert not progress["flashcards_done"]
+
+
+def test_cmd_study_resume_incomplete_session(tmp_db):
+    """Resuming a session skips already-completed components."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    # Mark reading and flashcards done
+    complete_session_component(tmp_db, 1, "reading")
+    complete_session_component(tmp_db, 1, "flashcards")
+
+    conn = get_connection(tmp_db)
+    questions = conn.execute("SELECT * FROM quiz_questions LIMIT 1").fetchall()
+    conn.close()
+
+    # Resume prompt, then answer the single quiz question
+    # Patch get_questions_for_domain since day 1 has a domain_id
+    with patch("gcp_tutor.app.Prompt.ask", side_effect=["resume", "a"]):
+        with patch("gcp_tutor.app.get_questions_for_domain", return_value=[dict(questions[0])]):
+            cmd_study(tmp_db)
+
+    from gcp_tutor.study import get_current_session_day
+    assert get_current_session_day(tmp_db) == 2
+
+
+def test_cmd_study_restart_clears_progress(tmp_db):
+    """Choosing 'restart' resets the session components."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    complete_session_component(tmp_db, 1, "reading")
+
+    # Choose restart, then 'q' immediately at reading prompt (since it resets)
+    with patch("gcp_tutor.app.Prompt.ask", side_effect=["restart", "q"]):
+        cmd_study(tmp_db)
+
+    # Reading should have been reset (not done)
+    progress = start_new_session(tmp_db)
+    assert not progress["reading_done"]
