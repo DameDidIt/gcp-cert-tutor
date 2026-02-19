@@ -30,6 +30,25 @@ from gcp_tutor.importer import import_file
 console = Console()
 
 
+class SessionExitRequested(Exception):
+    """Raised when user types 'q' or 'menu' during a study session."""
+    pass
+
+
+def session_prompt(prompt_text: str, **kwargs) -> str:
+    result = Prompt.ask(prompt_text, **kwargs)
+    if result.strip().lower() in ("q", "menu"):
+        raise SessionExitRequested()
+    return result
+
+
+def session_int_prompt(prompt_text: str, choices: list[str] = None, **kwargs) -> int:
+    result = Prompt.ask(prompt_text, choices=(choices or []) + ["q", "menu"], **kwargs)
+    if result.strip().lower() in ("q", "menu"):
+        raise SessionExitRequested()
+    return int(result)
+
+
 def show_welcome():
     console.print(Panel(
         "[bold]GCP Associate Cloud Engineer[/bold]\n[dim]Certification Prep Tool[/dim]",
