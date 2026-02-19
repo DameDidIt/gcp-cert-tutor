@@ -154,6 +154,17 @@ def clear_session_items(db_path: str, session_day: int) -> None:
     conn.close()
 
 
+def restart_session(db_path: str, session_day: int) -> None:
+    conn = get_connection(db_path)
+    conn.execute(
+        "UPDATE user_progress SET reading_done = 0, flashcards_done = 0, quiz_done = 0, completed_at = NULL WHERE session_day = ?",
+        (session_day,),
+    )
+    conn.execute("DELETE FROM session_items WHERE session_day = ?", (session_day,))
+    conn.commit()
+    conn.close()
+
+
 def is_session_incomplete(db_path: str) -> bool:
     day = get_current_session_day(db_path)
     conn = get_connection(db_path)

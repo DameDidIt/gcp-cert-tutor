@@ -5,7 +5,7 @@ from gcp_tutor.study import (
     get_current_session_day, get_todays_plan, complete_reading,
     complete_session_component, get_start_date, start_new_session,
     reset_all_progress, record_session_item, get_completed_session_items,
-    clear_session_items, is_session_incomplete,
+    clear_session_items, is_session_incomplete, restart_session,
 )
 
 def test_get_current_session_day_default(tmp_db):
@@ -120,3 +120,21 @@ def test_reset_clears_session_items(tmp_db):
     reset_all_progress(tmp_db)
     items = get_completed_session_items(tmp_db, session_day=1, component="flashcard")
     assert items == set()
+
+
+def test_restart_session(tmp_db):
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    complete_session_component(tmp_db, 1, "reading")
+    record_session_item(tmp_db, session_day=1, component="flashcard", item_id=5)
+
+    restart_session(tmp_db, session_day=1)
+
+    conn = get_connection(tmp_db)
+    progress = conn.execute("SELECT * FROM user_progress WHERE session_day = 1").fetchone()
+    conn.close()
+    assert progress["reading_done"] == 0
+    assert progress["flashcards_done"] == 0
+    assert progress["quiz_done"] == 0
+    assert get_completed_session_items(tmp_db, 1, "flashcard") == set()
