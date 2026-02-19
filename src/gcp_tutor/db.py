@@ -93,6 +93,14 @@ CREATE TABLE IF NOT EXISTS user_settings (
     key TEXT NOT NULL UNIQUE,
     value TEXT
 );
+
+CREATE TABLE IF NOT EXISTS session_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_day INTEGER NOT NULL,
+    component TEXT NOT NULL,
+    item_id INTEGER NOT NULL,
+    UNIQUE(session_day, component, item_id)
+);
 """
 
 

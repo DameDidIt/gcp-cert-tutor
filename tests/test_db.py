@@ -27,6 +27,16 @@ def test_init_db_is_idempotent(tmp_db):
     conn.close()
 
 
+def test_session_items_table_exists(tmp_db):
+    init_db(tmp_db)
+    conn = get_connection(tmp_db)
+    tables = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='session_items'"
+    ).fetchall()
+    conn.close()
+    assert len(tables) == 1
+
+
 def test_get_connection_returns_row_factory(tmp_db):
     init_db(tmp_db)
     conn = get_connection(tmp_db)
