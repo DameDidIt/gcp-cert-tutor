@@ -108,20 +108,38 @@ def run_flashcard_session(db_path: str, cards: list, session_day: int = None) ->
         console.print()
 
 
-def run_quiz_session(db_path: str, questions: list) -> tuple[int, int]:
+def run_quiz_session(db_path: str, questions: list, session_day: int = None) -> tuple[int, int]:
     if not questions:
         console.print("[yellow]No questions available![/yellow]")
         return 0, 0
+
+    # Filter out already-completed questions when resuming
+    if session_day is not None:
+        done_ids = get_completed_session_items(db_path, session_day, "quiz")
+        questions = [q for q in questions if q["id"] not in done_ids]
+        if not questions:
+            console.print("[yellow]All quiz questions already completed![/yellow]")
+            return 0, 0
+
     correct = 0
-    console.print(f"\n[bold]Quiz[/bold] — {len(questions)} questions\n")
+    total = len(questions)
+    console.print(f"\n[bold]Quiz[/bold] — {total} questions\n")
+
+    prompt_fn = session_prompt if session_day is not None else Prompt.ask
+
     for i, q in enumerate(questions, 1):
         console.print(f"[bold]Q{i}.[/bold] {q['stem']}\n")
         console.print(f"  [cyan]a)[/cyan] {q['choice_a']}")
         console.print(f"  [cyan]b)[/cyan] {q['choice_b']}")
         console.print(f"  [cyan]c)[/cyan] {q['choice_c']}")
         console.print(f"  [cyan]d)[/cyan] {q['choice_d']}")
-        answer = Prompt.ask("\nYour answer", choices=["a", "b", "c", "d"])
+        quiz_choices = ["a", "b", "c", "d"]
+        if session_day is not None:
+            quiz_choices = quiz_choices + ["q", "menu"]
+        answer = prompt_fn("\nYour answer", choices=quiz_choices)
         is_correct = record_quiz_answer(db_path, q["id"], answer)
+        if session_day is not None:
+            record_session_item(db_path, session_day, "quiz", q["id"])
         if is_correct:
             console.print("[green]Correct![/green]")
             correct += 1
@@ -130,8 +148,8 @@ def run_quiz_session(db_path: str, questions: list) -> tuple[int, int]:
         if q["explanation"]:
             console.print(f"[dim]{q['explanation']}[/dim]")
         console.print()
-    console.print(f"[bold]Score: {correct}/{len(questions)} ({correct/len(questions)*100:.0f}%)[/bold]\n")
-    return correct, len(questions)
+    console.print(f"[bold]Score: {correct}/{total} ({correct/total*100:.0f}%)[/bold]\n")
+    return correct, total
 
 
 def cmd_study(db_path: str):

@@ -40,7 +40,7 @@ def test_session_int_prompt_returns_normal_input():
 
 from gcp_tutor.db import init_db, get_connection
 from gcp_tutor.seed import seed_all
-from gcp_tutor.app import run_flashcard_session
+from gcp_tutor.app import run_flashcard_session, run_quiz_session
 from gcp_tutor.study import (
     start_new_session, get_completed_session_items, record_session_item,
 )
@@ -88,3 +88,46 @@ def test_run_flashcard_session_skips_completed_items(tmp_db):
     assert cards[0]["id"] in done
     assert cards[1]["id"] in done
     assert cards[2]["id"] in done
+
+
+def test_run_quiz_session_exits_on_q(tmp_db):
+    """User answers first question then types 'q' on second."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    conn = get_connection(tmp_db)
+    questions = conn.execute("SELECT * FROM quiz_questions LIMIT 2").fetchall()
+    conn.close()
+    questions = [dict(q) for q in questions]
+
+    # Answer first question with 'a', then 'q' on second
+    with patch("gcp_tutor.app.Prompt.ask", side_effect=["a", "q"]):
+        with pytest.raises(SessionExitRequested):
+            run_quiz_session(tmp_db, questions, session_day=1)
+
+    done = get_completed_session_items(tmp_db, 1, "quiz")
+    assert questions[0]["id"] in done
+    assert questions[1]["id"] not in done
+
+
+def test_run_quiz_session_skips_completed_items(tmp_db):
+    """When resuming, already-answered questions are skipped."""
+    init_db(tmp_db)
+    seed_all(tmp_db)
+    start_new_session(tmp_db)
+    conn = get_connection(tmp_db)
+    questions = conn.execute("SELECT * FROM quiz_questions LIMIT 3").fetchall()
+    conn.close()
+    questions = [dict(q) for q in questions]
+
+    # Mark first question as already done
+    record_session_item(tmp_db, 1, "quiz", questions[0]["id"])
+
+    # Should only prompt for questions[1] and questions[2]
+    with patch("gcp_tutor.app.Prompt.ask", side_effect=["a", "b"]):
+        run_quiz_session(tmp_db, questions, session_day=1)
+
+    done = get_completed_session_items(tmp_db, 1, "quiz")
+    assert questions[0]["id"] in done
+    assert questions[1]["id"] in done
+    assert questions[2]["id"] in done
