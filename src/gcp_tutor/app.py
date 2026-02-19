@@ -15,6 +15,7 @@ from gcp_tutor.study import (
     get_current_session_day, get_todays_plan, start_new_session,
     complete_session_component, get_calendar_days_elapsed, get_completed_sessions,
     get_total_sessions, reset_all_progress,
+    record_session_item, get_completed_session_items,
 )
 from gcp_tutor.flashcards import get_due_cards, get_cards_for_domain, record_flashcard_result
 from gcp_tutor.quiz import (
@@ -72,19 +73,38 @@ def show_menu():
         console.print(f"  [cyan]{cmd:<14}[/cyan] {desc}")
 
 
-def run_flashcard_session(db_path: str, cards: list) -> None:
+def run_flashcard_session(db_path: str, cards: list, session_day: int = None) -> None:
     if not cards:
         console.print("[yellow]No flashcards due right now![/yellow]")
         return
-    console.print(f"\n[bold]Flashcard Session[/bold] — {len(cards)} cards\n")
+
+    # Filter out already-completed cards when resuming
+    if session_day is not None:
+        done_ids = get_completed_session_items(db_path, session_day, "flashcard")
+        cards = [c for c in cards if c["id"] not in done_ids]
+        if not cards:
+            console.print("[yellow]All flashcards already completed![/yellow]")
+            return
+
+    total = len(cards)
+    console.print(f"\n[bold]Flashcard Session[/bold] — {total} cards\n")
+
+    prompt_fn = session_prompt if session_day is not None else Prompt.ask
+    int_prompt_fn = session_int_prompt if session_day is not None else (
+        lambda p, **kw: IntPrompt.ask(p, **kw)
+    )
+
     for i, card in enumerate(cards, 1):
-        console.print(Panel(card["front"], title=f"Card {i}/{len(cards)}", border_style="cyan"))
-        Prompt.ask("[dim]Press Enter to reveal answer[/dim]")
+        console.print(Panel(card["front"], title=f"Card {i}/{total}", border_style="cyan"))
+        prompt_fn("[dim]Press Enter to reveal answer[/dim]")
         console.print(Panel(card["back"], border_style="green"))
-        rating = IntPrompt.ask(
-            "Rate yourself (0=forgot, 3=hard, 4=good, 5=easy)", choices=["0","1","2","3","4","5"],
+        rating = int_prompt_fn(
+            "Rate yourself (0=forgot, 3=hard, 4=good, 5=easy)",
+            choices=["0", "1", "2", "3", "4", "5"],
         )
         record_flashcard_result(db_path, card["id"], rating)
+        if session_day is not None:
+            record_session_item(db_path, session_day, "flashcard", card["id"])
         console.print()
 
 
