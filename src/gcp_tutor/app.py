@@ -74,7 +74,7 @@ def show_menu():
         console.print(f"  [cyan]{cmd:<14}[/cyan] {desc}")
 
 
-def run_flashcard_session(db_path: str, cards: list, session_day: int = None) -> None:
+def run_flashcard_session(db_path: str, cards: list, session_day: int = None, allow_exit: bool = False) -> None:
     if not cards:
         console.print("[yellow]No flashcards due right now![/yellow]")
         return
@@ -90,14 +90,15 @@ def run_flashcard_session(db_path: str, cards: list, session_day: int = None) ->
     total = len(cards)
     console.print(f"\n[bold]Flashcard Session[/bold] — {total} cards\n")
 
-    prompt_fn = session_prompt if session_day is not None else Prompt.ask
-    int_prompt_fn = session_int_prompt if session_day is not None else (
+    use_session_prompts = session_day is not None or allow_exit
+    prompt_fn = session_prompt if use_session_prompts else Prompt.ask
+    int_prompt_fn = session_int_prompt if use_session_prompts else (
         lambda p, **kw: IntPrompt.ask(p, **kw)
     )
 
     for i, card in enumerate(cards, 1):
         console.print(Panel(card["front"], title=f"Card {i}/{total}", border_style="cyan"))
-        prompt_fn("[dim]Press Enter to reveal answer[/dim]")
+        prompt_fn("[dim]Press Enter to reveal answer (or 'q' to save & exit)[/dim]")
         console.print(Panel(card["back"], border_style="green"))
         rating = int_prompt_fn(
             "Rate yourself (0=forgot, 3=hard, 4=good, 5=easy)",
@@ -109,7 +110,7 @@ def run_flashcard_session(db_path: str, cards: list, session_day: int = None) ->
         console.print()
 
 
-def run_quiz_session(db_path: str, questions: list, session_day: int = None) -> tuple[int, int]:
+def run_quiz_session(db_path: str, questions: list, session_day: int = None, allow_exit: bool = False) -> tuple[int, int]:
     if not questions:
         console.print("[yellow]No questions available![/yellow]")
         return 0, 0
@@ -126,7 +127,8 @@ def run_quiz_session(db_path: str, questions: list, session_day: int = None) -> 
     total = len(questions)
     console.print(f"\n[bold]Quiz[/bold] — {total} questions\n")
 
-    prompt_fn = session_prompt if session_day is not None else Prompt.ask
+    use_session_prompts = session_day is not None or allow_exit
+    prompt_fn = session_prompt if use_session_prompts else Prompt.ask
 
     for i, q in enumerate(questions, 1):
         console.print(f"[bold]Q{i}.[/bold] {q['stem']}\n")
@@ -135,7 +137,7 @@ def run_quiz_session(db_path: str, questions: list, session_day: int = None) -> 
         console.print(f"  [cyan]c)[/cyan] {q['choice_c']}")
         console.print(f"  [cyan]d)[/cyan] {q['choice_d']}")
         quiz_choices = ["a", "b", "c", "d"]
-        if session_day is not None:
+        if use_session_prompts:
             quiz_choices = quiz_choices + ["q", "menu"]
         answer = prompt_fn("\nYour answer", choices=quiz_choices)
         is_correct = record_quiz_answer(db_path, q["id"], answer)
@@ -234,13 +236,19 @@ def cmd_quiz(db_path: str):
         questions = get_questions_for_domain(db_path, domain_id, count=count)
     else:
         questions = get_quiz_questions(db_path, count=count)
-    run_quiz_session(db_path, questions)
+    try:
+        run_quiz_session(db_path, questions, allow_exit=True)
+    except SessionExitRequested:
+        console.print("\n[yellow]Quiz session ended. Returning to menu.[/yellow]")
 
 
 def cmd_flashcards(db_path: str):
     console.print("\n[bold]Flashcard Drill[/bold]")
     cards = get_due_cards(db_path, limit=15)
-    run_flashcard_session(db_path, cards)
+    try:
+        run_flashcard_session(db_path, cards, allow_exit=True)
+    except SessionExitRequested:
+        console.print("\n[yellow]Flashcard session ended. Returning to menu.[/yellow]")
 
 
 def cmd_dashboard(db_path: str):
@@ -316,10 +324,14 @@ def cmd_review(db_path: str):
     if weak_domains:
         weakest = weak_domains[0]
         console.print(f"\n[bold]Drilling: {weakest['domain_name']}[/bold]")
-        cards = get_cards_for_domain(db_path, weakest["domain_id"], limit=10)
-        run_flashcard_session(db_path, cards)
-        questions = get_questions_for_domain(db_path, weakest["domain_id"], count=5)
-        run_quiz_session(db_path, questions)
+        console.print("[dim]Type 'q' or 'menu' at any prompt to return to the main menu.[/dim]\n")
+        try:
+            cards = get_cards_for_domain(db_path, weakest["domain_id"], limit=10)
+            run_flashcard_session(db_path, cards, allow_exit=True)
+            questions = get_questions_for_domain(db_path, weakest["domain_id"], count=5)
+            run_quiz_session(db_path, questions, allow_exit=True)
+        except SessionExitRequested:
+            console.print("\n[yellow]Review session exited. Returning to menu.[/yellow]")
 
 
 def cmd_import(db_path: str):
